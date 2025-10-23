@@ -37,6 +37,7 @@
       url = "github:hercules-ci/hercules-ci-effects";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-scripts-module.url = "github:adrian-gierakowski/nix-scripts-module";
   };
   outputs =
     {
@@ -96,6 +97,7 @@
       imports = [
         ./flake-modules
         hercules-ci-effects.flakeModule
+        inputs.nix-scripts-module.flakeModule
       ];
     };
 }

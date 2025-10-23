@@ -61,6 +61,21 @@
         "type": "github"
       }
     },
+    "nix-scripts-module": {
+      "locked": {
+        "lastModified": 1761203015,
+        "narHash": "sha256-UmQlrSIOiXaH0/PFVEjnYP35lhYbGASyJ96uvyEtJ1A=",
+        "owner": "adrian-gierakowski",
+        "repo": "nix-scripts-module",
+        "rev": "122c96268c8f29e76b3f50d7ce01ca5515a4eb86",
+        "type": "github"
+      },
+      "original": {
+        "owner": "adrian-gierakowski",
+        "repo": "nix-scripts-module",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1756911493,
@@ -81,6 +96,7 @@
       "inputs": {
         "flake-parts": "flake-parts",
         "hercules-ci-effects": "hercules-ci-effects",
+        "nix-scripts-module": "nix-scripts-module",
         "nixpkgs": "nixpkgs"
       }
     }

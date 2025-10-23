@@ -76,6 +76,7 @@
   perSystem =
     {
       config,
+      lib,
       pkgs,
       nvidiaPkgs,
       rocmPkgs,
@@ -98,5 +99,17 @@
         # ROCm support in nixpkgs is pretty bad right now
         # comfyui-amd = rocmPkgs.comfyuiPackages.comfyui;
       };
+      scriptsDefaults.dir = ./scripts;
+      scripts =
+        let
+          scripts = config.scripts;
+        in
+        {
+          github-get-default-branch = { };
+          comfyui-npins = ''exec ${lib.getExe pkgs.npins} -d flake-modules/projects/comfyui/npins "''${@}"'';
+          comfyui-nodes-npins = ''exec ${lib.getExe pkgs.npins} -d flake-modules/projects/comfyui/customNodes-npins "''${@}"'';
+          comfyui-update = "exec ${scripts.comfyui-npins.exe} update";
+          comfyui-nodes-update = "exec ${scripts.comfyui-nodes-npins.exe} update";
+        };
     };
 }
