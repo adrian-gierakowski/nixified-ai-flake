@@ -145,6 +145,16 @@ in
         '';
       };
 
+      extraModelsGroup = lib.mkOption {
+        type = with types; nullOr str;
+        default = null;
+        example = "comfyui-models";
+        description = ''
+          Group used for the extra models directory.
+          If set, the group will be created and the comfyui service will be part of it.
+        '';
+      };
+
       host = lib.mkOption {
         type = types.str;
         default = "127.0.0.1";
@@ -240,14 +250,23 @@ in
           isSystemUser = true;
         };
       };
-      users.groups = (if staticUser then { "${cfg.group}" = { }; } else { }) // {
-        "${cfg.cacheGroup}" = lib.mkIf (cfg.cacheGroup != null) { };
-      };
+      users.groups =
+        (if staticUser then { "${cfg.group}" = { }; } else { })
+        // {
+          "${cfg.cacheGroup}" = lib.mkIf (cfg.cacheGroup != null) { };
+        }
+        // (lib.optionalAttrs (cfg.extraModelsGroup != null) {
+          "${cfg.extraModelsGroup}" = { };
+        });
 
-      systemd.tmpfiles.rules = lib.mkIf (cfg.cacheGroup != null) [
-        # The '2' in '2705' sets the 'setgid' bit, so new files inherit the group owner.
-        "d ${execCacheDir} 2770 root ${cfg.cacheGroup} -"
-      ];
+      systemd.tmpfiles.rules =
+        (lib.optional (cfg.cacheGroup != null)
+          # The '2' in '2705' sets the 'setgid' bit, so new files inherit the group owner.
+          "d ${execCacheDir} 2770 root ${cfg.cacheGroup} -"
+        )
+        ++ (lib.optional (
+          cfg.extraModelsBasePath != null && cfg.extraModelsGroup != null
+        ) "d ${cfg.extraModelsBasePath} 2770 root ${cfg.extraModelsGroup} -");
 
       systemd.services.comfyui = {
         description = "comfyui";
@@ -285,7 +304,7 @@ in
               cfg.home
             ];
 
-            BindPaths = [ execCacheDir ];
+            BindPaths = [ execCacheDir ] ++ (lib.optional (cfg.extraModelsBasePath != null) cfg.extraModelsBasePath);
 
             CapabilityBoundingSet = [ "" ];
             DeviceAllow = [
@@ -325,10 +344,12 @@ in
               "AF_INET6"
               "AF_UNIX"
             ];
-            SupplementaryGroups = [
-              "render"
-            ] # for rocm to access /dev/dri/renderD* devices
-            ++ (lib.optional (cfg.cacheGroup != null) cfg.cacheGroup);
+            SupplementaryGroups =
+              [
+                "render"
+              ] # for rocm to access /dev/dri/renderD* devices
+              ++ (lib.optional (cfg.cacheGroup != null) cfg.cacheGroup)
+              ++ (lib.optional (cfg.extraModelsGroup != null) cfg.extraModelsGroup);
             SystemCallArchitectures = "native";
             SystemCallFilter = [
               "@system-service @resources"
