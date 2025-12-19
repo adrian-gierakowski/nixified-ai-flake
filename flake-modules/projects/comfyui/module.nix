@@ -13,6 +13,7 @@ let
   comfyuiPackage = cfg.package.override {
     withModels = cfg.models;
     withCustomNodes = cfg.customNodes;
+    extraModelsBasePath = cfg.extraModelsBasePath;
   };
 
   accelerationPkgs =
@@ -132,6 +133,15 @@ in
         example = [ ];
         description = ''
           A list of custom nodes to fetch and supply to comfyui in its custom_nodes folder
+        '';
+      };
+
+      extraModelsBasePath = lib.mkOption {
+        type = with types; nullOr str;
+        default = null;
+        description = ''
+          Base path to extra models to supply to comfyui.
+          This will be added as `base_path` in `extra_models_paths.yaml`.
         '';
       };
 
