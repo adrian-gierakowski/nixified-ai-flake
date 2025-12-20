@@ -62,14 +62,23 @@ let
           configs = "models/configs";
           loras = "models/loras";
           vae = "models/vae";
-          text_encoders = "models/text_encoders";
-          diffusion_models = "models/unet";
+          text_encoders = [
+            "models/text_encoders"
+            "models/clip"
+          ];
+          diffusion_models = [
+            "models/unet"
+            "models/diffusion_models"
+          ];
           clip_vision = "models/clip_vision";
           style_models = "models/style_models";
           embeddings = "models/embeddings";
           diffusers = "models/diffusers";
           vae_approx = "models/vae_approx";
-          controlnet = "models/controlnet";
+          controlnet = [
+            "models/controlnet"
+            "models/t2i_adapter"
+          ];
           gligen = "models/gligen";
           upscale_models = "models/upscale_models";
           latent_upscale_models = "models/latent_upscale_models";

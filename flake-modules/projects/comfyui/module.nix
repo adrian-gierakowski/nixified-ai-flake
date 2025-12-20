@@ -259,6 +259,7 @@ in
           "${cfg.extraModelsGroup}" = { };
         });
 
+
       systemd.tmpfiles.rules =
         (lib.optional (cfg.cacheGroup != null)
           # The '2' in '2705' sets the 'setgid' bit, so new files inherit the group owner.
