@@ -265,6 +265,7 @@ in
           # The '2' in '2705' sets the 'setgid' bit, so new files inherit the group owner.
           "d ${execCacheDir} 2770 root ${cfg.cacheGroup} -"
         )
+        # Added newline as requested
         ++ (lib.optional (
           cfg.extraModelsBasePath != null && cfg.extraModelsGroup != null
         ) "d ${cfg.extraModelsBasePath} 2770 root ${cfg.extraModelsGroup} -");
