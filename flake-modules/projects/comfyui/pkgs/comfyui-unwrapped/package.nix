@@ -43,6 +43,8 @@ python3Packages.buildPythonApplication {
       yarl
       av
       numpy
+      comfy-kitchen
+      comfy-aimdo
 
       # optional dependencies
       kornia
