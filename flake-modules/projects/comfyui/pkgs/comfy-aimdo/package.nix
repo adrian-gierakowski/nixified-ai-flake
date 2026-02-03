@@ -37,6 +37,7 @@ python3Packages.callPackage (
     preBuild = ''
       gcc -shared -o comfy_aimdo/aimdo.so -fPIC \
         -I${lib.getDev cudaPackages.cuda_cudart}/include \
+        -I${lib.getDev cudaPackages.cuda_nvcc}/include \
         -L${lib.getLib cudaPackages.cuda_cudart}/lib/stubs \
         src/control.c src/debug.c src/model-vbar.c src/pyt-cu-plug-alloc.c -lcuda
     '';

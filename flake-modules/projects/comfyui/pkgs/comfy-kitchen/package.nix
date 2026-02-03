@@ -28,16 +28,16 @@ python3Packages.callPackage (
       wheel
       cmake
       ninja
-      nanobind
       cudaPackages.cuda_nvcc
     ];
 
     buildInputs = [
+      nanobind
       torch
       cudaPackages.cuda_cudart
     ];
 
-    env.CUDA_HOME = "${lib.getDev cudaPackages.cuda_nvcc}";
+    env.CUDA_HOME = "${cudaPackages.cuda_nvcc}";
 
     meta = with lib; {
       description = "Fast Kernel Library for ComfyUI with multiple compute backends";
