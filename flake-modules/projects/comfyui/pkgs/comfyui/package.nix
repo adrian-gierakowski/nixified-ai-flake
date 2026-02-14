@@ -10,6 +10,7 @@
   writeShellScript,
   withCustomNodes ? [ ],
   withModels ? [ ],
+  extraModelsBasePath ? null,
   gccStdenv,
   comfyuiLib,
 }:
@@ -54,6 +55,41 @@ let
   modelPathsFile =
     let
       modelsDirPath = "${modelsDir}/${python3Packages.python.sitePackages}";
+      extraModelsConfig = lib.optionalAttrs (extraModelsBasePath != null) {
+        extra_models = {
+          base_path = extraModelsBasePath;
+          checkpoints = "models/checkpoints";
+          configs = "models/configs";
+          loras = "models/loras";
+          vae = "models/vae";
+          text_encoders = [
+            "models/text_encoders"
+            "models/clip"
+          ];
+          diffusion_models = [
+            "models/unet"
+            "models/diffusion_models"
+          ];
+          clip_vision = "models/clip_vision";
+          style_models = "models/style_models";
+          embeddings = "models/embeddings";
+          diffusers = "models/diffusers";
+          vae_approx = "models/vae_approx";
+          controlnet = [
+            "models/controlnet"
+            "models/t2i_adapter"
+          ];
+          gligen = "models/gligen";
+          upscale_models = "models/upscale_models";
+          latent_upscale_models = "models/latent_upscale_models";
+          custom_nodes = "custom_nodes";
+          hypernetworks = "models/hypernetworks";
+          photomaker = "models/photomaker";
+          classifiers = "models/classifiers";
+          model_patches = "models/model_patches";
+          audio_encoders = "models/audio_encoders";
+        };
+      };
     in
     writeTextFile {
       name = "extra_model_paths.yaml";
@@ -66,7 +102,7 @@ let
             custom_nodes = "@CUSTOM_NODES@";
           }
         );
-      });
+      } // extraModelsConfig);
     };
 in
 symlinkJoin {
