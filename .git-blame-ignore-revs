@@ -1,0 +1,3 @@
+# Commits that are purely auto-formatting or style changes
+b50af6375355a3163d745634ef2813db0aa9e967 # Nix format
+0c969ab2a2df0ef84f2ea06d5c02b7948340eac0 # format all nix files

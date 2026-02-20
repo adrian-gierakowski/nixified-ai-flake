@@ -4,14 +4,16 @@ We are seeking approval from all significant contributors to re-license the cont
 
 Below is a list of contributors we are asking for approval. This list includes contributors with surviving lines in the codebase, excluding files that are already MIT licensed (e.g., in `flake-modules/packages`).
 
+We have also excluded commits that were purely auto-formatting or style changes from the "Surviving Lines" count to better reflect authorship of logic.
+
 ## Contributor Statistics
 
 | Contributor | GitHub Handle | Commits | Lines Added | Lines Deleted | Surviving Lines |
 |---|---|---|---|---|---|
-| Adrian Gierakowski | @adrian-gierakowski | 75 | 4812 | 2036 | 3168 |
-| Matthew Croughan | @MatthewCroughan | 36 | 5330 | 3588 | 2272 |
-| mephsito | @pfmephisto | 2 | 896 | 12 | 638 |
-| Max Headroom |  | 17 | 2580 | 1381 | 230 |
+| Adrian Gierakowski | @adrian-gierakowski | 75 | 4812 | 2036 | 2869 |
+| Matthew Croughan | @MatthewCroughan | 36 | 5330 | 3588 | 2553 |
+| mephsito | @pfmephisto | 2 | 896 | 12 | 646 |
+| Max Headroom |  | 17 | 2580 | 1381 | 240 |
 | m3l6h | @M3L6H | 2 | 126 | 7 | 125 |
 | lodjuret | @Lodjuret | 10 | 451 | 398 | 56 |
 | Eelco Dolstra | @edolstra | 3 | 38 | 6 | 32 |

@@ -81,6 +81,11 @@ def get_blame_stats():
         # -M detects moved or copied lines within a file
         # --line-porcelain gives easy to parse format
         cmd = ["git", "blame", "--line-porcelain", "-w", "-M", filepath]
+
+        # Check if .git-blame-ignore-revs exists and use it
+        if os.path.exists(".git-blame-ignore-revs"):
+             cmd.extend(["--ignore-revs-file", ".git-blame-ignore-revs"])
+
         result = subprocess.run(cmd, capture_output=True, text=True, errors="replace")
 
         if result.returncode != 0:
