@@ -8,15 +8,15 @@ Below is a list of contributors we are asking for approval. This list includes c
 
 | Contributor | GitHub Handle | Commits | Lines Added | Lines Deleted | Surviving Lines |
 |---|---|---|---|---|---|
-| Adrian Gierakowski | @adrian-gierakowski | 75 | 4812 | 2036 | 3160 |
-| Matthew Croughan | @MatthewCroughan | 36 | 5330 | 3588 | 2239 |
-| mephsito | @pfmephisto | 2 | 896 | 12 | 642 |
+| Adrian Gierakowski | @adrian-gierakowski | 75 | 4812 | 2036 | 3168 |
+| Matthew Croughan | @MatthewCroughan | 36 | 5330 | 3588 | 2272 |
+| mephsito | @pfmephisto | 2 | 896 | 12 | 638 |
 | Max Headroom |  | 17 | 2580 | 1381 | 230 |
 | m3l6h | @M3L6H | 2 | 126 | 7 | 125 |
-| lodjuret | @Lodjuret | 10 | 451 | 398 | 52 |
+| lodjuret | @Lodjuret | 10 | 451 | 398 | 56 |
 | Eelco Dolstra | @edolstra | 3 | 38 | 6 | 32 |
 | Thorsten | @thorstenweber83 | 1 | 15 | 0 | 15 |
-| Alexis Williams |  | 1 | 9 | 9 | 9 |
+| Alexis Williams |  | 1 | 9 | 9 | 6 |
 | Karpfen | @Karpfen | 1 | 3 | 0 | 3 |
 | Gerg-L | @Gerg-L | 1 | 2 | 2 | 2 |
 | Tom Bärwinkel |  | 2 | 35 | 124 | 1 |
