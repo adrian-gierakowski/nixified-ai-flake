@@ -1,5 +1,6 @@
 import subprocess
 import re
+import os
 from collections import defaultdict
 
 # Mapping of aliases to canonical names
@@ -20,9 +21,10 @@ GITHUB_HANDLES = {
     "Karpfen": "Karpfen",
 }
 
-def get_stats():
-    # Run git log to get stats
-    cmd = ["git", "log", "--numstat", "--format=AUTHOR:%aN <%aE>"]
+def get_log_stats():
+    # Run git log to get stats, excluding flake-modules/packages
+    # We use pathspecs to exclude the directory
+    cmd = ["git", "log", "--numstat", "--format=AUTHOR:%aN <%aE>", "--", ".", ":(exclude)flake-modules/packages"]
     result = subprocess.run(cmd, capture_output=True, text=True, errors="replace")
 
     if result.returncode != 0:
@@ -58,18 +60,62 @@ def get_stats():
 
     return stats
 
-def generate_markdown(stats):
-    # Sort by number of commits
-    sorted_stats = sorted(stats.items(), key=lambda x: x[1]["commits"], reverse=True)
+def get_blame_stats():
+    # Get all tracked files excluding flake-modules/packages
+    cmd = ["git", "ls-files", ".", ":(exclude)flake-modules/packages"]
+    result = subprocess.run(cmd, capture_output=True, text=True, errors="replace")
 
-    md = "| Contributor | GitHub Handle | Commits | Lines Added | Lines Deleted |\n"
-    md += "|---|---|---|---|---|\n"
+    if result.returncode != 0:
+        print(f"Error running git ls-files: {result.stderr}")
+        return {}
 
-    for author, data in sorted_stats:
+    files = result.stdout.splitlines()
+    surviving_stats = defaultdict(int)
+
+    for filepath in files:
+        if not os.path.isfile(filepath):
+            continue
+
+        # Run git blame
+        # -w ignores whitespace changes
+        # --line-porcelain gives easy to parse format
+        cmd = ["git", "blame", "--line-porcelain", "-w", filepath]
+        result = subprocess.run(cmd, capture_output=True, text=True, errors="replace")
+
+        if result.returncode != 0:
+            # File might be binary or not tracked (shouldn't happen with ls-files but safe to check)
+            continue
+
+        for line in result.stdout.splitlines():
+            if line.startswith("author "):
+                author = line[7:].strip()
+                # Apply aliases
+                if author in ALIASES:
+                    author = ALIASES[author]
+                surviving_stats[author] += 1
+
+    return surviving_stats
+
+def generate_markdown(log_stats, blame_stats):
+    # Merge stats keys
+    all_authors = set(log_stats.keys()) | set(blame_stats.keys())
+
+    # Authors to display
+    authors_data = []
+
+    for author in all_authors:
+        # Skip bots
+        if author == "Hercules CI Effects" or author == "google-labs-jules[bot]":
+            continue
+
+        log_data = log_stats.get(author, {"commits": 0, "added": 0, "deleted": 0, "email": set()})
+        surviving_lines = blame_stats.get(author, 0)
+
+        # Determine GitHub handle
         handle = GITHUB_HANDLES.get(author, "")
         if not handle:
             # Try to infer from email if it's a noreply address
-            for email in data["email"]:
+            for email in log_data["email"]:
                 if "noreply.github.com" in email:
                     # Format: ID+username@...
                     match = re.search(r"\d+\+([^@]+)@", email)
@@ -83,17 +129,38 @@ def generate_markdown(stats):
                              handle = match.group(1)
                              break
 
-        handle_str = f"@{handle}" if handle else ""
-        if author == "Hercules CI Effects": # Bot
-             continue
-        if author == "google-labs-jules[bot]": # Me
-             continue
+        authors_data.append({
+            "name": author,
+            "handle": handle,
+            "commits": log_data["commits"],
+            "added": log_data["added"],
+            "deleted": log_data["deleted"],
+            "surviving": surviving_lines
+        })
 
-        md += f"| {author} | {handle_str} | {data['commits']} | {data['added']} | {data['deleted']} |\n"
+    # Sort by surviving lines, then commits
+    sorted_authors = sorted(authors_data, key=lambda x: (x["surviving"], x["commits"]), reverse=True)
+
+    md = "| Contributor | GitHub Handle | Commits | Lines Added | Lines Deleted | Surviving Lines |\n"
+    md += "|---|---|---|---|---|---|\n"
+
+    for data in sorted_authors:
+        handle_str = f"@{data['handle']}" if data['handle'] else ""
+
+        # Skip if no surviving lines (as per request to only track code currently in the repo)
+        if data['surviving'] == 0:
+            continue
+
+        # Skip "Not Committed Yet" which comes from git blame on uncommitted changes
+        if data['name'] == "Not Committed Yet":
+            continue
+
+        md += f"| {data['name']} | {handle_str} | {data['commits']} | {data['added']} | {data['deleted']} | {data['surviving']} |\n"
 
     return md
 
 if __name__ == "__main__":
-    stats = get_stats()
-    md = generate_markdown(stats)
+    log_stats = get_log_stats()
+    blame_stats = get_blame_stats()
+    md = generate_markdown(log_stats, blame_stats)
     print(md)
